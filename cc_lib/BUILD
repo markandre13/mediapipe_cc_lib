@@ -4,15 +4,30 @@ licenses(["notice"])
 
 package(default_visibility = ["//visibility:public"])
 
+cc_binary(
+    name = "mediapipe_bin",
+    deps = [":mediapipe"],
+)
+
 cc_shared_library(
     name = "mediapipe_shared",
     deps = [":mediapipe"],
     shared_lib_name = "libmediapipe.so",
-    # linkshared = True,
 )
 
 cc_library(
     name = "mediapipe",
     srcs = ["mediapipe.cc"],
-    # linkshared = True,
+    hdrs = ["mediapipe.hh"],
+    deps = [
+        "//mediapipe/tasks/cc/components/containers:category",
+        "//mediapipe/tasks/cc/components/containers:classification_result",
+        "//mediapipe/tasks/cc/components/containers:landmark",
+        "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker",
+        "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker_result",
+        "//mediapipe/framework/port:opencv_imgcodecs",
+        # "//mediapipe/framework/formats:image_frame",
+        # "//mediapipe/framework/formats:image_frame_opencv",
+        # "//mediapipe/framework/port:opencv_imgproc",
+    ],
 )
