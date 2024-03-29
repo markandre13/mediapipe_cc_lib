@@ -26,8 +26,13 @@ cc_library(
         "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker",
         "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker_result",
         "//mediapipe/framework/port:opencv_imgcodecs",
-        # "//mediapipe/framework/formats:image_frame",
-        # "//mediapipe/framework/formats:image_frame_opencv",
+        # cv::VideoCapture
+        "//mediapipe/framework/port:opencv_video",
+        # cv::imshow
+        "//mediapipe/framework/port:opencv_highgui",
+
+        "//mediapipe/framework/formats:image_frame",
+        "//mediapipe/framework/formats:image_frame_opencv",
         # "//mediapipe/framework/port:opencv_imgproc",
     ],
 )
