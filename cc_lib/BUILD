@@ -5,8 +5,22 @@ licenses(["notice"])
 package(default_visibility = ["//visibility:public"])
 
 cc_binary(
-    name = "mediapipe_bin",
-    deps = [":mediapipe"],
+    name = "mediapipe_main",
+    srcs = ["mediapipe_main.cc"],
+    deps = [
+        ":mediapipe",
+        
+        # load image
+        "//mediapipe/framework/port:opencv_imgcodecs",
+        # cv::VideoCapture
+        "//mediapipe/framework/port:opencv_video",
+        # cv::imshow
+        "//mediapipe/framework/port:opencv_highgui",
+        # "//mediapipe/framework/port:opencv_imgproc",
+
+        # "//mediapipe/framework/formats:image_frame",
+        # "//mediapipe/framework/formats:image_frame_opencv",
+    ],
 )
 
 cc_test(
@@ -35,14 +49,5 @@ cc_library(
         "//mediapipe/tasks/cc/components/containers:landmark",
         "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker",
         "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker_result",
-        "//mediapipe/framework/port:opencv_imgcodecs",
-        # cv::VideoCapture
-        "//mediapipe/framework/port:opencv_video",
-        # cv::imshow
-        "//mediapipe/framework/port:opencv_highgui",
-
-        "//mediapipe/framework/formats:image_frame",
-        "//mediapipe/framework/formats:image_frame_opencv",
-        # "//mediapipe/framework/port:opencv_imgproc",
     ],
 )
