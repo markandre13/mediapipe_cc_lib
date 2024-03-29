@@ -9,22 +9,13 @@
 // #include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.h"
 // #include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_result.h"
 
-// cv::imread
-// #include "mediapipe/framework/port/opencv_imgcodecs_inc.h"
-
-// cv::VideoCapture
-// #include "mediapipe/framework/port/opencv_video_inc.h"
-
-// https://docs.opencv.org/4.x/d7/dfc/group__highgui.html
-// #include "mediapipe/framework/port/opencv_highgui_inc.h"
-
 // #include "mediapipe/framework/formats/image_frame.h"
 // #include "mediapipe/framework/formats/image_frame_opencv.h"
 
 // #include <iostream>
 // #include <sys/time.h>
 
-// using namespace std;
+using namespace std;
 
 // using mediapipe::tasks::vision::core::RunningMode;
 // using mediapipe::tasks::vision::face_landmarker::FaceLandmarker;
@@ -83,6 +74,35 @@ FaceLandmarker::Create(std::unique_ptr<FaceLandmarkerOptions> options) {
 }
 
 FaceLandmarker::~FaceLandmarker() {}
+
+void FaceLandmarker::Detect(int channels, int width, int height, int width_step, uint8_t* pixel_data) {
+    ImageFrame image_frame(
+        channels == 4 ? ImageFormat::SRGBA : ImageFormat::SRGB,
+        width, height, width_step, pixel_data, [](uint8_t *) {}
+    );
+    Image image(std::make_shared<mediapipe::ImageFrame>(std::move(image_frame)));
+
+    auto result = mp->Detect(image);
+
+    if (!result.ok()) {
+        cerr << "Detection failed: " << result.status() << endl;
+        return;
+    }
+
+    cout << "found " << result->face_landmarks.size() << " faces" << endl;
+
+    for (uint32_t face = 0; face < result->face_landmarks.size(); ++face) {
+        cout << "landmark[" << face
+            << "].size() = " << result->face_landmarks[face].landmarks.size()
+            << endl;
+    }
+    if (result->face_blendshapes.has_value()) {
+        cout << "we have blend shapes" << endl;
+    }
+    if (result->facial_transformation_matrixes.has_value()) {
+        cout << "we have facial_transformation_matrixes" << endl;
+    }
+}
 
 // FaceLandmarker::FaceLandmarker(std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarker> &mp): mp(std::move(mp)) {}
 
