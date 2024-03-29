@@ -1,5 +1,14 @@
 #include "mediapipe.hh"
 
+// cv::imread
+#include "mediapipe/framework/port/opencv_imgcodecs_inc.h"
+// cv::VideoCapture
+
+#include "mediapipe/framework/port/opencv_video_inc.h"
+
+// https://docs.opencv.org/4.x/d7/dfc/group__highgui.html
+#include "mediapipe/framework/port/opencv_highgui_inc.h"
+
 #include <iostream>
 
 using mediapipe::cc_lib::vision::core::RunningMode;
@@ -95,16 +104,14 @@ int main() {
         return 1;
     }
 
-//   // https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html#gab32ee19e22660912565f8140d0f675a8
-//   cv::Mat input = cv::imread("mediapipe/objc/testdata/sergey.png");
-//   if (input.data == nullptr) {
-//     cerr << "failed to load image" << endl;
-//     return 1;
-//   }
-//   ImageFrame image_frame(
-//       input.channels() == 4 ? ImageFormat::SRGBA : ImageFormat::SRGB,
-//       input.cols, input.rows, input.step, input.data, [](uint8_t *) {});
-//   Image image(std::make_shared<mediapipe::ImageFrame>(std::move(image_frame)));
+    // https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html#gab32ee19e22660912565f8140d0f675a8
+    cv::Mat input = cv::imread("mediapipe/objc/testdata/sergey.png");
+    if (input.data == nullptr) {
+        cerr << "failed to load image" << endl;
+        return 1;
+    }
+
+    landmarker->Detect(input.channels(), input.cols, input.rows, input.step, input.data);
 
 //   auto result = (*landmarker)->Detect(image);
 //   if (!result.ok()) {
