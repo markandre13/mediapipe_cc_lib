@@ -4,7 +4,7 @@
 
 using mediapipe::cc_lib::vision::core::RunningMode;
 using mediapipe::cc_lib::vision::face_landmarker::FaceLandmarkerOptions;
-// using mediapipe::cc_lib::vision::face_landmarker::FaceLandmarker;
+using mediapipe::cc_lib::vision::face_landmarker::FaceLandmarker;
 
 using namespace std;
 
@@ -85,11 +85,15 @@ int main() {
   cpp_options->output_facial_transformation_matrixes = true;
   cpp_options->num_faces = 1;
 
-//   auto landmarker = FaceLandmarker::Create(std::move(cpp_options));
-//   if (!landmarker.ok()) {
-//     cerr << "Failed to create FaceLandmarker: " << landmarker.status() << endl;
+  auto landmarker = FaceLandmarker::Create(std::move(cpp_options));
+//   if (!landmarker.has_value()) {
+//     cerr << "Failed to create FaceLandmarker: " << landmarker.error().what() << endl;
 //     return 1;
 //   }
+    if (!landmarker) {
+        cerr << "Failed to create FaceLandmarker"  << endl;
+        return 1;
+    }
 
 //   // https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html#gab32ee19e22660912565f8140d0f675a8
 //   cv::Mat input = cv::imread("mediapipe/objc/testdata/sergey.png");
