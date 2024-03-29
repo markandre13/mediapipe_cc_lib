@@ -9,6 +9,16 @@ cc_binary(
     deps = [":mediapipe"],
 )
 
+cc_test(
+    name = "mediapipe_test",
+    srcs = ["mediapipe_test.cc"],
+    deps = [
+        ":mediapipe",
+        "//mediapipe/framework/port:gtest",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 cc_shared_library(
     name = "mediapipe_shared",
     deps = [":mediapipe"],
@@ -18,7 +28,7 @@ cc_shared_library(
 cc_library(
     name = "mediapipe",
     srcs = ["mediapipe.cc"],
-    hdrs = ["mediapipe.hh"],
+    hdrs = ["mediapipe.hh", "mediapipe_detail.hh"],
     deps = [
         "//mediapipe/tasks/cc/components/containers:category",
         "//mediapipe/tasks/cc/components/containers:classification_result",

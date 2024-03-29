@@ -1,11 +1,13 @@
+#include "mediapipe_detail.hh"
+
 // i now try to mimic the python program wrote in c++
 
 // bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 cc_lib:mediapipe_bin &&
 // ./bazel-mediapipe/bazel-out/darwin-opt/bin/cc_lib/mediapipe_bin
 
-#include "mediapipe/tasks/cc/vision/core/running_mode.h"
-#include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.h"
-#include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_result.h"
+// #include "mediapipe/tasks/cc/vision/core/running_mode.h"
+// #include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.h"
+// #include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_result.h"
 
 // cv::imread
 #include "mediapipe/framework/port/opencv_imgcodecs_inc.h"
@@ -38,26 +40,39 @@ using namespace cv;
 
 using mediapipe::tasks::vision::face_landmarker::FaceLandmarkerResult;
 
-int view() {
-  Mat mat1;
-  mat1 = Mat::ones(200, 320, CV_32FC1);
-  mat1 = mat1 * 200;
-  imshow("test", mat1);
-  waitKey(0);
+namespace mediapipe {
+namespace cc_lib {
+namespace detail {
 
-  //   Mat dst;
-  //   normalize(mat1, dst, 0, 1, NORM_MINMAX);
-  //   imshow("test1", dst);
-  //   waitKey(0);
+std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarkerOptions>
+convert(const std::unique_ptr<mediapipe::cc_lib::vision::face_landmarker::FaceLandmarkerOptions> &in) {
+    auto out = std::make_unique<FaceLandmarkerOptions>();
 
-  //   mat1.convertTo(dst, CV_8UC1);
-  //   imshow("test2", dst);
-  //   waitKey(0);
+    out->base_options.model_asset_path = in->base_options.model_asset_path;
+    out->running_mode = static_cast<mediapipe::tasks::vision::core::RunningMode>(in->running_mode);
+    out->num_faces = in->num_faces;
+    out->min_face_detection_confidence = in->min_face_detection_confidence;
+    out->min_face_presence_confidence = in->min_face_presence_confidence;
+    out->min_tracking_confidence = in->min_tracking_confidence;
+    out->output_face_blendshapes = in->output_face_blendshapes;
+    out->output_facial_transformation_matrixes = in->output_facial_transformation_matrixes;
 
-  return 0;
+    return out;
 }
 
-int main() {
+}
+
+namespace vision {
+namespace face_landmarker {
+    FaceLandmarkerOptions::FaceLandmarkerOptions() {}
+}
+}
+
+} // namespace cc_lib
+} // namespace mediapipe
+
+
+int mainxx() {
   cout << "start" << endl;
 
   auto cpp_options = std::make_unique<FaceLandmarkerOptions>();
@@ -72,7 +87,8 @@ int main() {
   cpp_options->result_callback =
       [&](absl::StatusOr<FaceLandmarkerResult> result, const Image &image,
           int64_t timestamp_ms) {
-        // this might be called from a thread hence imgshow won't work here (macOS needs to run opencv in the main thread)
+        // this might be called from a thread hence imgshow won't work here
+        // (macOS needs to run opencv in the main thread)
         cout << "callback" << endl;
       };
 
