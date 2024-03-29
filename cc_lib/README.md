@@ -29,7 +29,7 @@ one can also build a shared library but it's an experimental bazel features and 
 
 to try things out, put a main() into `cc_lib/mediapipe.cc` and run
 
-    bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 cc_lib:mediapipe_bin && ./bazel-mediapipe_cc_lib/bazel-out/darwin-opt/bin/cc_lib/mediapipe_bin
+    bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 cc_lib:mediapipe_main && ./bazel-mediapipe_cc_lib/bazel-out/darwin-opt/bin/cc_lib/mediapipe_main
 
 ### test
 
