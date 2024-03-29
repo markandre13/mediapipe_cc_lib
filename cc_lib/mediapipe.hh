@@ -98,14 +98,13 @@ struct FaceLandmarkerOptions {
 
 class FaceLandmarker {
     public:
-        // FaceLandmarker();
         ~FaceLandmarker();
-        // FaceLandmarker(const FaceLandmarker&) = delete;
-        // FaceLandmarker& operator=(const FaceLandmarker&) = delete;
 
         std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarker> mp;
         // static std::expected<std::unique_ptr<FaceLandmarker>, std::runtime_error> Create(std::unique_ptr<FaceLandmarkerOptions> options);
         static std::unique_ptr<FaceLandmarker> Create(std::unique_ptr<FaceLandmarkerOptions> options);
+
+        void Detect(int channels, int width, int height, int width_step, uint8_t* pixel_data);
 };
 
 } // namespace face_landmarker
