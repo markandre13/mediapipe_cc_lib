@@ -60,15 +60,33 @@ convert(const std::unique_ptr<mediapipe::cc_lib::vision::face_landmarker::FaceLa
     return out;
 }
 
-}
+} // namespace detail
 
 namespace vision {
 namespace face_landmarker {
-    FaceLandmarkerOptions::FaceLandmarkerOptions() {}
-}
+
+FaceLandmarkerOptions::FaceLandmarkerOptions() {}
+
+std::unique_ptr<FaceLandmarker>
+FaceLandmarker::Create(std::unique_ptr<FaceLandmarkerOptions> options) {
+    auto flm = mediapipe::tasks::vision::face_landmarker::FaceLandmarker::Create(std::move(
+        mediapipe::cc_lib::detail::convert(options)
+    ));
+    if (!flm.ok()) {
+        return {};
+    }
+    // std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarker> ptr(std::move(*flm));
+    // new FaceLandmarker(std::move(ptr));
+    auto result = std::make_unique<FaceLandmarker>();
+    result->mp = std::move(*flm);
+    return result;
 }
 
+FaceLandmarker::~FaceLandmarker() {}
+
+// FaceLandmarker::FaceLandmarker(std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarker> &mp): mp(std::move(mp)) {}
+
+} // namespace face_landmarker
+} // namespace vision
 } // namespace cc_lib
 } // namespace mediapipe
-
-
