@@ -2,8 +2,18 @@
 #define MEDIAPIPE_CCLIB_H_
 
 #include <string>
+// #include <expected>
 
 namespace mediapipe {
+
+namespace tasks {
+namespace vision {
+namespace face_landmarker {
+    class FaceLandmarker;
+} // namespace face_landmarker
+} // namespace vision
+} // namespace tasks
+
 namespace cc_lib {
 namespace core {
 
@@ -85,6 +95,19 @@ struct FaceLandmarkerOptions {
     //                      int64_t)>
     //       result_callback = nullptr;
 };
+
+class FaceLandmarker {
+    public:
+        // FaceLandmarker();
+        ~FaceLandmarker();
+        // FaceLandmarker(const FaceLandmarker&) = delete;
+        // FaceLandmarker& operator=(const FaceLandmarker&) = delete;
+
+        std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarker> mp;
+        // static std::expected<std::unique_ptr<FaceLandmarker>, std::runtime_error> Create(std::unique_ptr<FaceLandmarkerOptions> options);
+        static std::unique_ptr<FaceLandmarker> Create(std::unique_ptr<FaceLandmarkerOptions> options);
+};
+
 } // namespace face_landmarker
 } // namespace vision
 } // namespace cc_lib
