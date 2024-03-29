@@ -13,8 +13,7 @@ therefore i had to come up with something on my own.
 * only macos (too early to worry about cross-platform)
 * only face_landmarker (that's what i needed 1st)
 * api is close to mediapipe's internal api's
-* has it's own headers and mediapipe's internal one contain
-  to many dependencies
+* mediapipe_cc_lib has it's own headers as mediapipe's internal ones contain too many dependencies
 
 ### build
 
@@ -31,3 +30,7 @@ one can also build a shared library but it's an experimental bazel features and 
 to try things out, put a main() into `cc_lib/mediapipe.cc` and run
 
     bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 cc_lib:mediapipe_bin && ./bazel-mediapipe_cc_lib/bazel-out/darwin-opt/bin/cc_lib/mediapipe_bin
+
+### test
+
+    bazel test --test_output=all --define MEDIAPIPE_DISABLE_GPU=1 cc_lib:mediapipe_test
