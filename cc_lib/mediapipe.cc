@@ -18,7 +18,18 @@ convert(const std::unique_ptr<mediapipe::cc_lib::vision::face_landmarker::FaceLa
     out->min_tracking_confidence = in->min_tracking_confidence;
     out->output_face_blendshapes = in->output_face_blendshapes;
     out->output_facial_transformation_matrixes = in->output_facial_transformation_matrixes;
-
+    if (in->result_callback != nullptr) {
+        auto rb = in->result_callback;
+        out->result_callback = [rb](
+            absl::StatusOr<mediapipe::tasks::vision::face_landmarker::FaceLandmarkerResult> result,
+            const Image&,
+            int64_t timestamp_ms)
+        {
+            if (result.ok()) {
+                rb(convert(*result), timestamp_ms);
+            }
+        };
+    }
     return out;
 }
 
@@ -115,25 +126,41 @@ std::optional<FaceLandmarkerResult> FaceLandmarker::Detect(int channels, int wid
     }
 
     return ::mediapipe::cc_lib::detail::convert(*mp_result);
-
-
-
-    // cout << "found " << result->face_landmarks.size() << " faces" << endl;
-
-    // for (uint32_t face = 0; face < result->face_landmarks.size(); ++face) {
-    //     cout << "landmark[" << face
-    //         << "].size() = " << result->face_landmarks[face].landmarks.size()
-    //         << endl;
-    // }
-    // if (result->face_blendshapes.has_value()) {
-    //     cout << "we have blend shapes" << endl;
-    // }
-    // if (result->facial_transformation_matrixes.has_value()) {
-    //     cout << "we have facial_transformation_matrixes" << endl;
-    // }
 }
 
-// FaceLandmarker::FaceLandmarker(std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarker> &mp): mp(std::move(mp)) {}
+std::optional<FaceLandmarkerResult> FaceLandmarker::DetectForVideo(int channels, int width, int height, int width_step, uint8_t* pixel_data, int64_t timestamp_ms) {
+    ImageFrame image_frame(
+        channels == 4 ? ImageFormat::SRGBA : ImageFormat::SRGB,
+        width, height, width_step, pixel_data, [](uint8_t *) {}
+    );
+    Image image(std::make_shared<mediapipe::ImageFrame>(std::move(image_frame)));
+
+    auto mp_result = mp->DetectForVideo(image, timestamp_ms);
+
+    if (!mp_result.ok()) {
+        cerr << "Detection failed: " << mp_result.status() << endl;
+        return std::nullopt;
+    }
+
+    return ::mediapipe::cc_lib::detail::convert(*mp_result);
+}
+
+bool FaceLandmarker::DetectAsync(int channels, int width, int height, int width_step, uint8_t* pixel_data, int64_t timestamp_ms) {
+    ImageFrame image_frame(
+        channels == 4 ? ImageFormat::SRGBA : ImageFormat::SRGB,
+        width, height, width_step, pixel_data, [](uint8_t *) {}
+    );
+    Image image(std::make_shared<mediapipe::ImageFrame>(std::move(image_frame)));
+
+    auto mp_result = mp->DetectAsync(image, timestamp_ms);
+
+    if (!mp_result.ok()) {
+        cerr << "Detection failed: " << mp_result << endl;
+        return false;
+    }
+
+    return true;
+}
 
 } // namespace face_landmarker
 } // namespace vision

@@ -1,6 +1,6 @@
 # Mediapipe Standalone C++ Library
 
-### introduction
+## introduction
 
 while mediapipe is written in c++, it does not build a c++ library. (but there are an
 internal c api, and external python, java, javascript and objc api's.)
@@ -14,6 +14,17 @@ therefore i had to come up with something on my own.
 * only face_landmarker (that's what i needed 1st)
 * api is close to mediapipe's internal api's
 * mediapipe_cc_lib has it's own headers as mediapipe's internal ones contain too many dependencies
+
+## mediapipe
+
+### how mediapipe builds
+
+* builds with bazel, which is google's internal build tool. it's written in java, can download additional files, etc.
+* absl: google's c++ utility library
+* tensorflow (lite): google's neural network library
+* protocol buffers: google's programming language independent
+data exchange format
+* details on the [face landmarker](https://developers.google.com/mediapipe/solutions/vision/face_landmarker): task file and detailed description are linked at the bottom of the page
 
 ## build
 
