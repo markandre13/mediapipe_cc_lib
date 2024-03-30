@@ -111,7 +111,33 @@ int main() {
         return 1;
     }
 
-    landmarker->Detect(input.channels(), input.cols, input.rows, input.step, input.data);
+    auto result = landmarker->Detect(input.channels(), input.cols, input.rows, input.step, input.data);
+    if (!result.has_value()) {
+        cerr << "failed to detect face landmarks" << endl;
+        return 1;
+    }
+
+    if (result->face_landmarks.size() != 1) {
+        cerr << "expect one face" << endl;
+        return 1;
+    }
+    if (result->face_landmarks[0].landmarks.size() != 478) {
+        cerr << "expected 478 landmarks for face, found " << result->face_landmarks[0].landmarks.size() << endl;
+        return 1;
+    }
+    auto &lm = result->face_landmarks[0].landmarks[0];
+    if (fabs(lm.x - 0.494063) > 0.000001) {
+        cerr << "expected x = 0.494063, got " << lm.x << endl;
+        return 1;
+    }
+    if (fabs(lm.y - 0.646164) > 0.000001) {
+        cerr << "expected x = 0.646164, got " << lm.x << endl;
+        return 1;
+    }
+    if (fabs(lm.z - -0.06861) > 0.000001) {
+        cerr << "expected x = -0.06861, got " << lm.x << endl;
+        return 1;
+    }
 
 //   auto result = (*landmarker)->Detect(image);
 //   if (!result.ok()) {
