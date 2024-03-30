@@ -47,5 +47,5 @@ TEST(MediapipeCcLib, FaceLandmarkerOptions_SameValues) {
     ASSERT_EQ(options->output_facial_transformation_matrixes, mp_options->output_facial_transformation_matrixes);
 }
 
-TEST(MediapipeCcLib, FaceLandmarkerOptions_SameValues) {
+TEST(MediapipeCcLib, FaceLandmarkerResult_SameValues) {
 }
