@@ -1,35 +1,6 @@
 #include "mediapipe_detail.hh"
 
-// i now try to mimic the python program wrote in c++
-
-// bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 cc_lib:mediapipe_bin &&
-// ./bazel-mediapipe/bazel-out/darwin-opt/bin/cc_lib/mediapipe_bin
-
-// #include "mediapipe/tasks/cc/vision/core/running_mode.h"
-// #include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.h"
-// #include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_result.h"
-
-// #include "mediapipe/framework/formats/image_frame.h"
-// #include "mediapipe/framework/formats/image_frame_opencv.h"
-
-// #include <iostream>
-// #include <sys/time.h>
-
 using namespace std;
-
-// using mediapipe::tasks::vision::core::RunningMode;
-// using mediapipe::tasks::vision::face_landmarker::FaceLandmarker;
-// using mediapipe::tasks::vision::face_landmarker::FaceLandmarkerOptions;
-
-// using mediapipe::Image;
-// using mediapipe::ImageFormat;
-// using mediapipe::ImageFrame;
-
-// mediapipe_cpp_lib was able to use an external cv and protobuf library
-
-// using namespace cv;
-
-// using mediapipe::tasks::vision::face_landmarker::FaceLandmarkerResult;
 
 namespace mediapipe {
 namespace cc_lib {
@@ -51,6 +22,60 @@ convert(const std::unique_ptr<mediapipe::cc_lib::vision::face_landmarker::FaceLa
     return out;
 }
 
+mediapipe::cc_lib::vision::face_landmarker::FaceLandmarkerResult
+convert(const mediapipe::tasks::vision::face_landmarker::FaceLandmarkerResult &in) {
+
+    // for now, to keep the implementation simple and avoid mediapipe internal details, we just copy all the data.
+    // ideally, we might just provide access to the protobuffer structures which
+    // mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_result.cc: ConvertToFaceLandmarkerResult()
+    // uses to create ::mediapipe::tasks::vision::face_landmarker::FaceLandmarkerResult
+    mediapipe::cc_lib::vision::face_landmarker::FaceLandmarkerResult out;
+    out.face_landmarks.resize(in.face_landmarks.size());
+
+    auto faceOut = out.face_landmarks.begin();
+    for(auto faceIn = in.face_landmarks.begin(); faceIn != in.face_landmarks.end(); ++faceIn, ++faceOut) {
+        faceOut->landmarks.resize(faceIn->landmarks.size());
+        auto landmarkOut = faceOut->landmarks.begin();
+        for(auto landmarkIn = faceIn->landmarks.begin(); landmarkIn != faceIn->landmarks.end(); ++landmarkIn, ++landmarkOut) {
+            landmarkOut->x = landmarkIn->x;
+            landmarkOut->y = landmarkIn->y;
+            landmarkOut->z = landmarkIn->z;
+            // landmarkOut->visibility = landmarkIn->visibility;
+            // landmarkOut->presence = landmarkIn->presence;
+            // landmarkOut->name = landmarkIn->name;
+        }
+    }
+
+//   std::transform(face_landmarks_proto.begin(), face_landmarks_proto.end(),
+//                  result.face_landmarks.begin(),
+//                  components::containers::ConvertToNormalizedLandmarks);
+//   if (face_blendshapes_proto.has_value()) {
+//     result.face_blendshapes =
+//         std::vector<components::containers::Classifications>(
+//             face_blendshapes_proto->size());
+//     std::transform(
+//         face_blendshapes_proto->begin(), face_blendshapes_proto->end(),
+//         result.face_blendshapes->begin(),
+//         [](const mediapipe::ClassificationList& classification_list) {
+//           return components::containers::ConvertToClassifications(
+//               classification_list);
+//         });
+//   }
+//   if (facial_transformation_matrixes_proto.has_value()) {
+//     result.facial_transformation_matrixes =
+//         std::vector<Matrix>(facial_transformation_matrixes_proto->size());
+//     std::transform(facial_transformation_matrixes_proto->begin(),
+//                    facial_transformation_matrixes_proto->end(),
+//                    result.facial_transformation_matrixes->begin(),
+//                    [](const mediapipe::MatrixData& matrix_proto) {
+//                      mediapipe::Matrix matrix;
+//                      MatrixFromMatrixDataProto(matrix_proto, &matrix);
+//                      return matrix;
+//                    });
+//   }
+    return out;
+}
+
 } // namespace detail
 
 namespace vision {
@@ -60,8 +85,8 @@ FaceLandmarkerOptions::FaceLandmarkerOptions() {}
 
 std::unique_ptr<FaceLandmarker>
 FaceLandmarker::Create(std::unique_ptr<FaceLandmarkerOptions> options) {
-    auto flm = mediapipe::tasks::vision::face_landmarker::FaceLandmarker::Create(std::move(
-        mediapipe::cc_lib::detail::convert(options)
+    auto flm = ::mediapipe::tasks::vision::face_landmarker::FaceLandmarker::Create(std::move(
+        ::mediapipe::cc_lib::detail::convert(options)
     ));
     if (!flm.ok()) {
         return {};
@@ -75,33 +100,37 @@ FaceLandmarker::Create(std::unique_ptr<FaceLandmarkerOptions> options) {
 
 FaceLandmarker::~FaceLandmarker() {}
 
-void FaceLandmarker::Detect(int channels, int width, int height, int width_step, uint8_t* pixel_data) {
+std::optional<FaceLandmarkerResult> FaceLandmarker::Detect(int channels, int width, int height, int width_step, uint8_t* pixel_data) {
     ImageFrame image_frame(
         channels == 4 ? ImageFormat::SRGBA : ImageFormat::SRGB,
         width, height, width_step, pixel_data, [](uint8_t *) {}
     );
     Image image(std::make_shared<mediapipe::ImageFrame>(std::move(image_frame)));
 
-    auto result = mp->Detect(image);
+    auto mp_result = mp->Detect(image);
 
-    if (!result.ok()) {
-        cerr << "Detection failed: " << result.status() << endl;
-        return;
+    if (!mp_result.ok()) {
+        cerr << "Detection failed: " << mp_result.status() << endl;
+        return std::nullopt;
     }
 
-    cout << "found " << result->face_landmarks.size() << " faces" << endl;
+    return ::mediapipe::cc_lib::detail::convert(*mp_result);
 
-    for (uint32_t face = 0; face < result->face_landmarks.size(); ++face) {
-        cout << "landmark[" << face
-            << "].size() = " << result->face_landmarks[face].landmarks.size()
-            << endl;
-    }
-    if (result->face_blendshapes.has_value()) {
-        cout << "we have blend shapes" << endl;
-    }
-    if (result->facial_transformation_matrixes.has_value()) {
-        cout << "we have facial_transformation_matrixes" << endl;
-    }
+
+
+    // cout << "found " << result->face_landmarks.size() << " faces" << endl;
+
+    // for (uint32_t face = 0; face < result->face_landmarks.size(); ++face) {
+    //     cout << "landmark[" << face
+    //         << "].size() = " << result->face_landmarks[face].landmarks.size()
+    //         << endl;
+    // }
+    // if (result->face_blendshapes.has_value()) {
+    //     cout << "we have blend shapes" << endl;
+    // }
+    // if (result->facial_transformation_matrixes.has_value()) {
+    //     cout << "we have facial_transformation_matrixes" << endl;
+    // }
 }
 
 // FaceLandmarker::FaceLandmarker(std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarker> &mp): mp(std::move(mp)) {}
