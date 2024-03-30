@@ -2,8 +2,8 @@
 
 // cv::imread
 #include "mediapipe/framework/port/opencv_imgcodecs_inc.h"
-// cv::VideoCapture
 
+// cv::VideoCapture
 #include "mediapipe/framework/port/opencv_video_inc.h"
 
 // https://docs.opencv.org/4.x/d7/dfc/group__highgui.html
@@ -83,18 +83,18 @@ using namespace std;
 // }
 
 int main() {
-  cout << "start" << endl;
+    cout << "start" << endl;
 
-  auto cpp_options = std::make_unique<FaceLandmarkerOptions>();
-  cpp_options->base_options.model_asset_path =
-      "/Users/mark/python/py311-venv-mediapipe/"
-      "face_landmarker_v2_with_blendshapes.task";
-  cpp_options->running_mode = RunningMode::IMAGE;
-  cpp_options->output_face_blendshapes = true;
-  cpp_options->output_facial_transformation_matrixes = true;
-  cpp_options->num_faces = 1;
+    auto cpp_options = std::make_unique<FaceLandmarkerOptions>();
+    cpp_options->base_options.model_asset_path =
+        "/Users/mark/python/py311-venv-mediapipe/"
+        "face_landmarker_v2_with_blendshapes.task";
+    cpp_options->running_mode = RunningMode::IMAGE;
+    cpp_options->output_face_blendshapes = true;
+    cpp_options->output_facial_transformation_matrixes = true;
+    cpp_options->num_faces = 1;
 
-  auto landmarker = FaceLandmarker::Create(std::move(cpp_options));
+    auto landmarker = FaceLandmarker::Create(std::move(cpp_options));
 //   if (!landmarker.has_value()) {
 //     cerr << "Failed to create FaceLandmarker: " << landmarker.error().what() << endl;
 //     return 1;
