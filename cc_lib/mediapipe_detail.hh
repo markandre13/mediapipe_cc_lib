@@ -14,6 +14,9 @@ namespace detail {
 std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarkerOptions>
 convert(const std::unique_ptr<mediapipe::cc_lib::vision::face_landmarker::FaceLandmarkerOptions> &in);
 
+mediapipe::cc_lib::vision::face_landmarker::FaceLandmarkerResult
+convert(const mediapipe::tasks::vision::face_landmarker::FaceLandmarkerResult &);
+
 }
 } // namespace cc_lib
 } // namespace mediapipe
