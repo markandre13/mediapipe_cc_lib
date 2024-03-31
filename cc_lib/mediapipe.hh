@@ -18,14 +18,13 @@ class FaceLandmarker;
 }  // namespace tasks
 
 namespace cc_lib {
-namespace core {
 
+namespace core {
 // mediapipe/tasks/cc/core/base_options.h
 struct BaseOptions {
         // The path to the model asset to open and mmap in memory.
         std::string model_asset_path = "";
 };
-
 }  // namespace core
 
 namespace components {
@@ -50,6 +49,62 @@ struct NormalizedLandmark {
 };
 struct NormalizedLandmarks {
         std::vector<NormalizedLandmark> landmarks;
+};
+
+// wrapper for upstream/mediapipe_cc_lib/mediapipe/tasks/cc/components/containers/category.h
+
+/**
+ *  Defines a single classification result.
+ *
+ * The label maps packed into the TFLite Model Metadata [1] are used to populate
+ * the 'category_name' and 'display_name' fields.
+ *
+ * [1]: https://www.tensorflow.org/lite/convert/metadata
+ */
+struct Category {
+        /**
+         * The index of the category in the classification model output.
+         */
+        int index;
+        /**
+         * The score for this category, e.g. (but not necessarily) a probability in [0,1].
+         */
+        float score;
+        /**
+         * The optional ID for the category, read from the label map packed in the
+         * TFLite Model Metadata if present. Not necessarily human-readable.
+         */
+        std::optional<std::string> category_name = std::nullopt;
+        /**
+         * The optional human-readable name for the category, read from the label map
+         * packed in the TFLite Model Metadata if present.
+         */
+        std::optional<std::string> display_name = std::nullopt;
+};
+
+// wrapper for upstream/mediapipe_cc_lib/mediapipe/tasks/cc/components/containers/classification_result.h
+
+/**
+ * Defines classification results for a given classifier head.
+ */
+struct Classifications {
+        /**
+         * The array of predicted categories, usually sorted by descending scores,
+         * e.g. from high to low probability.
+         */
+        std::vector<Category> categories;
+        /**
+         * The index of the classifier head (i.e. output tensor) these categories
+         * refer to. This is useful for multi-head models.
+         */
+        int head_index;
+        /**
+         * The optional name of the classifier head, as provided in the TFLite Model
+         * Metadata [1] if present. This is useful for multi-head models.
+         *
+         * [1]: https://www.tensorflow.org/lite/convert/metadata
+         */
+        std::optional<std::string> head_name = std::nullopt;
 };
 
 }  // namespace containers
@@ -93,9 +148,10 @@ struct FaceLandmarkerResult {
          * Detected face landmarks in normalized image coordinates.
          */
         std::vector<::mediapipe::cc_lib::components::containers::NormalizedLandmarks> face_landmarks;
-        //   // Optional face blendshapes results.
-        //   std::optional<std::vector<components::containers::Classifications>>
-        //       face_blendshapes;
+        /**
+         * Optional face blendshapes results.
+         */
+        std::optional<std::vector<::mediapipe::cc_lib::components::containers::Classifications>> face_blendshapes;
         //   // Optional facial transformation matrix.
         //   std::optional<std::vector<Matrix>> facial_transformation_matrixes;
 };
