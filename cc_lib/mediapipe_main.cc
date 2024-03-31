@@ -117,51 +117,78 @@ int main() {
         return 1;
     }
 
+    //
+    // face landmarks
+    //
+
     if (result->face_landmarks.size() != 1) {
-        cerr << "expect one face" << endl;
+        cerr << "face landmarks: expected one face" << endl;
         return 1;
     }
     if (result->face_landmarks[0].landmarks.size() != 478) {
-        cerr << "expected 478 landmarks for face, found " << result->face_landmarks[0].landmarks.size() << endl;
+        cerr << "face landmarks: expected 478 landmarks for face, found " << result->face_landmarks[0].landmarks.size() << endl;
         return 1;
     }
     auto &lm = result->face_landmarks[0].landmarks[0];
     if (fabs(lm.x - 0.494063) > 0.000001) {
-        cerr << "expected x = 0.494063, got " << lm.x << endl;
+        cerr << "face landmarks: expected x = 0.494063, got " << lm.x << endl;
         return 1;
     }
     if (fabs(lm.y - 0.646164) > 0.000001) {
-        cerr << "expected x = 0.646164, got " << lm.x << endl;
+        cerr << "face landmarks: expected x = 0.646164, got " << lm.x << endl;
         return 1;
     }
     if (fabs(lm.z - -0.06861) > 0.000001) {
-        cerr << "expected x = -0.06861, got " << lm.x << endl;
+        cerr << "face landmarks: expected x = -0.06861, got " << lm.x << endl;
         return 1;
     }
 
-//   auto result = (*landmarker)->Detect(image);
-//   if (!result.ok()) {
-//     cerr << "Detection failed: " << result.status() << endl;
-//     return 1;
-//   }
+    //
+    // blendshapes
+    //
 
-//   for (uint32_t face = 0; face < result->face_landmarks.size(); ++face) {
-//     cout << "landmark[" << face
-//          << "].size() = " << result->face_landmarks[face].landmarks.size()
-//          << endl;
-//   }
-//   if (result->face_blendshapes.has_value()) {
-//     cout << "we have blend shapes" << endl;
-//   }
-//   if (result->facial_transformation_matrixes.has_value()) {
-//     cout << "we have facial_transformation_matrixes" << endl;
-//   }
+    if (!result->face_blendshapes.has_value()) {
+        cerr << "face blendshapes: expected to have a value" << endl;
+        return 1;
+    }
 
-//   cv::namedWindow("edges", cv::WINDOW_NORMAL); // create window named 'edges'
-//   cv::imshow("edges", input);
-//   cv::waitKey(0);
+    if (!result->face_blendshapes->size() == 1) {
+        cerr << "face blendshapes: expected one face" << endl;
+        return 1;
+    }
+    auto &bm = result->face_blendshapes->at(0);
+    if (bm.head_index != 0) {
+        cerr << "face blendshapes: expected head_index 0" << endl;
+        return 1;
+    }
+    if (bm.head_name.has_value()) {
+        cerr << "face blendshapes: expected head to not have a name" << endl;
+        return 1;
+    }
+    if (bm.categories.size() != 52) {
+        cerr << "face blendshapes: expected to have 52 blendshapes" << endl;
+        return 1;
+    }
+    auto &cat = bm.categories[1];
+    if (cat.index != 1) {
+        cerr << "face blendshapes: category[1].index to be 1" << endl;
+        return 1;
+    }
+    if (fabs(cat.score - 0.035165) > 0.000001) {
+        cerr << "face blendshapes: category[1].score to be 0.035165" << endl;
+        return 1;
+    }
 
-  cout << "finish" << endl;
+    if (!cat.category_name.has_value() || *cat.category_name != "browDownLeft") {
+        cerr << "face blendshapes: category[1].category_name to be \"browDownLeft\"" << endl;
+        return 1;
+    }
+    if (cat.display_name.has_value() ) {
+        cerr << "face blendshapes: category[1].display_name to not have a value" << endl;
+        return 1;
+    }
 
-  return 0;
+    cout << "finish" << endl;
+
+    return 0;
 }
