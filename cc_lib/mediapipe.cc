@@ -71,25 +71,10 @@ std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarkerOptions
         }
     }
     
-    if (in.facial_transformation_matrixes.has_value()) {
-        cout << "we have facial_transformation_matrixes" << endl;
-    }
+    // if (in.facial_transformation_matrixes.has_value()) {
+    //     cout << "we have facial_transformation_matrixes" << endl;
+    // }
 
-    //   std::transform(face_landmarks_proto.begin(), face_landmarks_proto.end(),
-    //                  result.face_landmarks.begin(),
-    //                  components::containers::ConvertToNormalizedLandmarks);
-    //   if (face_blendshapes_proto.has_value()) {
-    //     result.face_blendshapes =
-    //         std::vector<components::containers::Classifications>(
-    //             face_blendshapes_proto->size());
-    //     std::transform(
-    //         face_blendshapes_proto->begin(), face_blendshapes_proto->end(),
-    //         result.face_blendshapes->begin(),
-    //         [](const mediapipe::ClassificationList& classification_list) {
-    //           return components::containers::ConvertToClassifications(
-    //               classification_list);
-    //         });
-    //   }
     //   if (facial_transformation_matrixes_proto.has_value()) {
     //     result.facial_transformation_matrixes =
     //         std::vector<Matrix>(facial_transformation_matrixes_proto->size());
