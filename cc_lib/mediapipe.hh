@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <functional>
 // #include <expected>
 
 namespace mediapipe {
