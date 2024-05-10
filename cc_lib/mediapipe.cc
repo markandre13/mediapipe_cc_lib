@@ -55,7 +55,8 @@ std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarkerOptions
     }
 
     if (in.face_blendshapes.has_value()) {
-        out.face_blendshapes.emplace(in.face_blendshapes->size());
+        out.face_blendshapes = {{}};
+        out.face_blendshapes->resize(in.face_blendshapes->size());
         auto faceOut = out.face_blendshapes->begin();
         for (auto faceIn = in.face_blendshapes->begin(); faceIn != in.face_blendshapes->end(); ++faceIn, ++faceOut) {
             faceOut->head_name = faceIn->head_name;
