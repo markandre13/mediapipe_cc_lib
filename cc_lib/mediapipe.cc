@@ -33,7 +33,7 @@ std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarkerOptions
 ::mediapipe::cc_lib::vision::face_landmarker::FaceLandmarkerResult convert(const mediapipe::tasks::vision::face_landmarker::FaceLandmarkerResult &in) {
     // for now, to keep the implementation simple and avoid mediapipe internal details, we just copy all the data.
     // ideally, we might just provide access to the protobuffer structures which
-    // mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_result.cc: ConvertToFaceLandmarkerResult()
+    //   mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_result.cc: ConvertToFaceLandmarkerResult()
     // uses to create ::mediapipe::tasks::vision::face_landmarker::FaceLandmarkerResult
     ::mediapipe::cc_lib::vision::face_landmarker::FaceLandmarkerResult out;
 
@@ -72,22 +72,19 @@ std::unique_ptr<mediapipe::tasks::vision::face_landmarker::FaceLandmarkerOptions
         }
     }
     
-    // if (in.facial_transformation_matrixes.has_value()) {
-    //     cout << "we have facial_transformation_matrixes" << endl;
-    // }
+    if (in.facial_transformation_matrixes.has_value()) {
+        out.facial_transformation_matrixes = {{}};
+        out.facial_transformation_matrixes->resize(in.facial_transformation_matrixes->size());
+        auto matrixOut = out.facial_transformation_matrixes->begin();
+        for(auto matrixIn = in.facial_transformation_matrixes->begin(); matrixIn != in.facial_transformation_matrixes->end(); ++matrixIn) {
+            if (matrixIn->rows() != 4 || matrixIn->cols() != 4) {
+                throw runtime_error("facial_transformation_matrix is not of size 4x4");
+            }
+            memcpy(matrixOut->data, matrixIn->data(), 16 * sizeof(float));
+            auto rows = matrixIn->rows();
+        }
+    }
 
-    //   if (facial_transformation_matrixes_proto.has_value()) {
-    //     result.facial_transformation_matrixes =
-    //         std::vector<Matrix>(facial_transformation_matrixes_proto->size());
-    //     std::transform(facial_transformation_matrixes_proto->begin(),
-    //                    facial_transformation_matrixes_proto->end(),
-    //                    result.facial_transformation_matrixes->begin(),
-    //                    [](const mediapipe::MatrixData& matrix_proto) {
-    //                      mediapipe::Matrix matrix;
-    //                      MatrixFromMatrixDataProto(matrix_proto, &matrix);
-    //                      return matrix;
-    //                    });
-    //   }
     return out;
 }
 
