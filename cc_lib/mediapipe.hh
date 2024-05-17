@@ -140,6 +140,10 @@ namespace face_landmarker {
 
 // wrapper for mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_result.h
 
+struct Mat4 {
+    float data[16];
+};
+
 /**
  * The face landmarks detection result from FaceLandmarker, where each vector
  * element represents a single face detected in the image.
@@ -153,8 +157,10 @@ struct FaceLandmarkerResult {
          * Optional face blendshapes results.
          */
         std::optional<std::vector<::mediapipe::cc_lib::components::containers::Classifications>> face_blendshapes;
-        //   // Optional facial transformation matrix.
-        //   std::optional<std::vector<Matrix>> facial_transformation_matrixes;
+        /**
+         * Optional facial transformation matrix.
+         */
+        std::optional<std::vector<Mat4>> facial_transformation_matrixes;
 };
 
 // wrapper for mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.h:FaceLandmarkerOptions
