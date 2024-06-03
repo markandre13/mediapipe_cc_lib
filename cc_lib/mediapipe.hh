@@ -243,6 +243,8 @@ class FaceLandmarker {
         std::optional<FaceLandmarkerResult> Detect(int channels, int width, int height, int width_step, uint8_t* pixel_data);
         std::optional<FaceLandmarkerResult> DetectForVideo(int channels, int width, int height, int width_step, uint8_t* pixel_data, int64_t timestamp_ms);
         bool DetectAsync(int channels, int width, int height, int width_step, uint8_t* pixel_data, int64_t timestamp_ms);
+
+        bool Close();
 };
 
 }  // namespace face_landmarker
