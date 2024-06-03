@@ -152,6 +152,11 @@ bool FaceLandmarker::DetectAsync(int channels, int width, int height, int width_
     return true;
 }
 
+bool FaceLandmarker::Close() {
+    auto mp_result = mp->Close();
+    return mp_result.ok();
+}
+
 }  // namespace face_landmarker
 }  // namespace vision
 }  // namespace cc_lib
