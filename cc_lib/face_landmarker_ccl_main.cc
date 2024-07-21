@@ -70,11 +70,11 @@ int face_landmarker_it() {
     return 1;
   }
   if (fabs(lm.y - 0.646164) > 0.000001) {
-    cerr << "face landmarks: expected x = 0.646164, got " << lm.x << endl;
+    cerr << "face landmarks: expected y = 0.646164, got " << lm.y << endl;
     return 1;
   }
   if (fabs(lm.z - -0.06861) > 0.000001) {
-    cerr << "face landmarks: expected x = -0.06861, got " << lm.x << endl;
+    cerr << "face landmarks: expected z = -0.06861, got " << lm.z << endl;
     return 1;
   }
 
