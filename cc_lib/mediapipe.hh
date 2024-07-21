@@ -12,9 +12,15 @@ namespace mediapipe {
 
 namespace tasks {
 namespace vision {
+
 namespace face_landmarker {
 class FaceLandmarker;
 }  // namespace face_landmarker
+
+namespace pose_landmarker {
+class PoseLandmarker;
+}  // namespace pose_landmarker
+
 }  // namespace vision
 }  // namespace tasks
 
@@ -248,6 +254,82 @@ class FaceLandmarker {
 };
 
 }  // namespace face_landmarker
+
+namespace pose_landmarker {
+
+// The pose landmarks detection result from PoseLandmarker, where each vector
+// element represents a single pose detected in the image.
+struct PoseLandmarkerResult {
+        // Segmentation masks for pose.
+        // std::optional<std::vector<Image>> segmentation_masks;
+        // Detected pose landmarks in normalized image coordinates.
+        std::vector<::mediapipe::cc_lib::components::containers::NormalizedLandmarks> pose_landmarks;
+        // Detected pose landmarks in world coordinates.
+        std::vector<::mediapipe::cc_lib::components::containers::NormalizedLandmarks> pose_world_landmarks;
+};
+
+/**
+ * Configuration options for PoseLandmarker
+ */
+struct PoseLandmarkerOptions {
+        PoseLandmarkerOptions();
+
+        // Base options for configuring MediaPipe Tasks library, such as specifying
+        // the TfLite model bundle file with metadata, accelerator options, op
+        // resolver, etc.
+        ::mediapipe::cc_lib::core::BaseOptions base_options;
+
+        // The running mode of the task. Default to the image mode.
+        // PoseLandmarker has three running modes:
+        // 1) The image mode for detecting pose landmarks on single image inputs.
+        // 2) The video mode for detecting pose landmarks on the decoded frames of a
+        //    video.
+        // 3) The live stream mode for detecting pose landmarks on the live stream of
+        //    input data, such as from camera. In this mode, the "result_callback"
+        //    below must be specified to receive the detection results asynchronously.
+        ::mediapipe::cc_lib::vision::core::RunningMode running_mode = mediapipe::cc_lib::vision::core::RunningMode::IMAGE;
+
+        // The maximum number of poses can be detected by the PoseLandmarker.
+        int num_poses = 1;
+
+        // The minimum confidence score for the pose detection to be considered
+        // successful.
+        float min_pose_detection_confidence = 0.5;
+
+        // The minimum confidence score of pose presence score in the pose landmark
+        // detection.
+        float min_pose_presence_confidence = 0.5;
+
+        // The minimum confidence score for the pose tracking to be considered
+        // successful.
+        float min_tracking_confidence = 0.5;
+
+        // The user-defined result callback for processing live stream data.
+        // The result callback should only be specified when the running mode is set
+        // to RunningMode::LIVE_STREAM.
+        std::function<void(std::optional<PoseLandmarkerResult>, int64_t timestamp_ms)> result_callback = nullptr;
+
+        // Whether to output segmentation masks.
+        bool output_segmentation_masks = false;
+};
+
+class PoseLandmarker {
+    public:
+        ~PoseLandmarker();
+
+        std::unique_ptr<mediapipe::tasks::vision::pose_landmarker::PoseLandmarker> mp;
+        // static std::expected<std::unique_ptr<FaceLandmarker>, std::runtime_error> Create(std::unique_ptr<FaceLandmarkerOptions> options);
+        static std::unique_ptr<PoseLandmarker> Create(std::unique_ptr<PoseLandmarkerOptions> options);
+
+        std::optional<PoseLandmarkerResult> Detect(int channels, int width, int height, int width_step, uint8_t* pixel_data);
+        std::optional<PoseLandmarkerResult> DetectForVideo(int channels, int width, int height, int width_step, uint8_t* pixel_data, int64_t timestamp_ms);
+        bool DetectAsync(int channels, int width, int height, int width_step, uint8_t* pixel_data, int64_t timestamp_ms);
+
+        bool Close();
+};
+
+} // namespace pose_landmarker
+
 }  // namespace vision
 }  // namespace cc_lib
 }  // namespace mediapipe

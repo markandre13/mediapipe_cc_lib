@@ -28,7 +28,7 @@ using mediapipe::tasks::vision::pose_landmarker::PoseLandmarkerResult;
 
 using namespace std;
 
-int main() {
+int pose_landmarker_native() {
   cout << "start pose_landmarker_native" << endl;
 
   auto cpp_options = std::make_unique<PoseLandmarkerOptions>();
