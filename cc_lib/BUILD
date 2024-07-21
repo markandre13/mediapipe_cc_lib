@@ -30,7 +30,7 @@ cc_test(
 
 cc_binary(
     name = "mediapipe_main",
-    srcs = ["mediapipe_main.cc"],
+    srcs = ["face_landmarker_ccl_main.cc"],
     deps = [
         ":mediapipe_lib",
   
