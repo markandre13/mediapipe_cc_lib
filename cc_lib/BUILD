@@ -14,6 +14,8 @@ cc_binary(
         "//mediapipe/tasks/cc/components/containers:landmark",
         "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker",
         "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker_result",
+        "//mediapipe/tasks/cc/vision/pose_landmarker:pose_landmarker",
+        "//mediapipe/tasks/cc/vision/pose_landmarker:pose_landmarker_result",
     ],
     linkshared = True,
 )
@@ -58,5 +60,7 @@ cc_library(
         "//mediapipe/tasks/cc/components/containers:landmark",
         "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker",
         "//mediapipe/tasks/cc/vision/face_landmarker:face_landmarker_result",
+        "//mediapipe/tasks/cc/vision/pose_landmarker:pose_landmarker",
+        "//mediapipe/tasks/cc/vision/pose_landmarker:pose_landmarker_result",
     ],
 )
