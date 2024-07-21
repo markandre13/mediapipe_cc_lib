@@ -1,6 +1,7 @@
 bazel-*
 .DS_Store
 *~
+cc_lib/*.task
 mediapipe/MediaPipe.xcodeproj
 mediapipe/MediaPipe.tulsiproj/*.tulsiconf-user
 mediapipe/provisioning_profile.mobileprovision
