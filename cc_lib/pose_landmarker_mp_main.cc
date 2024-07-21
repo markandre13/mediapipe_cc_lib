@@ -3,8 +3,8 @@
  */
 
 #include "mediapipe/tasks/cc/vision/core/running_mode.h"
-#include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker.h"
-#include "mediapipe/tasks/cc/vision/face_landmarker/face_landmarker_result.h"
+#include "mediapipe/tasks/cc/vision/pose_landmarker/pose_landmarker.h"
+#include "mediapipe/tasks/cc/vision/pose_landmarker/pose_landmarker_result.h"
 
 // cv::imread
 #include "mediapipe/framework/port/opencv_imgcodecs_inc.h"
@@ -22,26 +22,26 @@ using mediapipe::Image;
 using mediapipe::ImageFormat;
 using mediapipe::ImageFrame;
 using mediapipe::tasks::vision::core::RunningMode;
-using mediapipe::tasks::vision::face_landmarker::FaceLandmarker;
-using mediapipe::tasks::vision::face_landmarker::FaceLandmarkerOptions;
-using mediapipe::tasks::vision::face_landmarker::FaceLandmarkerResult;
+using mediapipe::tasks::vision::pose_landmarker::PoseLandmarker;
+using mediapipe::tasks::vision::pose_landmarker::PoseLandmarkerOptions;
+using mediapipe::tasks::vision::pose_landmarker::PoseLandmarkerResult;
 
 using namespace std;
 
 int main() {
-  cout << "start face_landmarker_native" << endl;
+  cout << "start pose_landmarker_native" << endl;
 
-  auto cpp_options = std::make_unique<FaceLandmarkerOptions>();
-  cpp_options->base_options.model_asset_path =
-      "/Users/mark/python/py311-venv-mediapipe/"
-      "face_landmarker_v2_with_blendshapes.task";
+  auto cpp_options = std::make_unique<PoseLandmarkerOptions>();
+  cpp_options->base_options.model_asset_path = "cc_lib/pose_landmarker_full.task";
   cpp_options->running_mode = RunningMode::LIVE_STREAM;
-  cpp_options->output_face_blendshapes = true;
-  cpp_options->output_facial_transformation_matrixes = true;
-  cpp_options->num_faces = 1;
+  cpp_options->num_poses = 1;
+  cpp_options->min_pose_detection_confidence = 0.5;
+  cpp_options->min_pose_presence_confidence = 0.5;
+  cpp_options->min_tracking_confidence = 0.5;
+  cpp_options->output_segmentation_masks = false;
 
   cpp_options->result_callback =
-      [&](absl::StatusOr<FaceLandmarkerResult> result, const Image &image,
+      [&](absl::StatusOr<PoseLandmarkerResult> result, const Image &image,
           int64_t timestamp_ms) {
         // this might be called from a thread hence imgshow won't work here
         // (macOS needs to run opencv in the main thread)
@@ -49,24 +49,21 @@ int main() {
         if (!result.ok()) {
           cout << "  result not ok" << endl;
         } else {
-          cout << "  number of faces: " << result->face_landmarks.size()
-               << endl;
-          for (auto &face : result->face_landmarks) {
-            cout << "    face with " << face.landmarks.size() << " landmarkers"
-                 << endl;
-            if (result->face_blendshapes) {
-                cout << "    have blendshapes" << endl;
+            cout << "  have segmentation mask: " << (result->segmentation_masks.has_value() ? "yes" : "no") << endl;
+            cout << "  poses                 : " << result->pose_landmarks.size() << endl;
+            for(auto &pose: result->pose_landmarks) {
+                cout << "    pose has " << pose.landmarks.size() << " landmarks" << endl;
+                for (auto landmark = pose.landmarks.begin(); landmark != pose.landmarks.end(); ++landmark) {
+                    cout << "      xyz = " << landmark->x << ", " << landmark->y << ", " << landmark->z<< endl;
+                }
             }
-            if (result->facial_transformation_matrixes) {
-                cout << "    have facial_transformation_matrixes" << endl;
-            }
-          }
+            cout << "  world poses           : " << result->pose_world_landmarks.size() << endl;
         }
       };
 
-  auto landmarker = FaceLandmarker::Create(std::move(cpp_options));
+  auto landmarker = PoseLandmarker::Create(std::move(cpp_options));
   if (!landmarker.ok()) {
-    cerr << "Failed to create FaceLandmarker: " << landmarker.status() << endl;
+    cerr << "Failed to create PoseLandmarker: " << landmarker.status() << endl;
     return 1;
   }
 

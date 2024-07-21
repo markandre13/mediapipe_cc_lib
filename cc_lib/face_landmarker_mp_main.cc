@@ -32,9 +32,7 @@ int face_landmarker_native() {
   cout << "start face_landmarker_native" << endl;
 
   auto cpp_options = std::make_unique<FaceLandmarkerOptions>();
-  cpp_options->base_options.model_asset_path =
-      "/Users/mark/python/py311-venv-mediapipe/"
-      "face_landmarker_v2_with_blendshapes.task";
+  cpp_options->base_options.model_asset_path = "cc_lib/face_landmarker.task";
   cpp_options->running_mode = RunningMode::LIVE_STREAM;
   cpp_options->output_face_blendshapes = true;
   cpp_options->output_facial_transformation_matrixes = true;
@@ -55,10 +53,10 @@ int face_landmarker_native() {
             cout << "    face with " << face.landmarks.size() << " landmarkers"
                  << endl;
             if (result->face_blendshapes) {
-                cout << "    have blendshapes" << endl;
+              cout << "    have blendshapes" << endl;
             }
             if (result->facial_transformation_matrixes) {
-                cout << "    have facial_transformation_matrixes" << endl;
+              cout << "    have facial_transformation_matrixes" << endl;
             }
           }
         }
