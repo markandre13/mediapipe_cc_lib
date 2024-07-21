@@ -7,7 +7,12 @@ package(default_visibility = ["//visibility:public"])
 # external shared library
 cc_binary(
     name = "mediapipe",
-    srcs = ["face_landmarker.cc", "mediapipe.hh", "mediapipe_detail.hh"],
+    srcs = [
+        "face_landmarker.cc",
+        "pose_landmarker.cc",
+        "mediapipe.hh",
+        "mediapipe_detail.hh"
+    ],
     deps = [
         "//mediapipe/tasks/cc/components/containers:category",
         "//mediapipe/tasks/cc/components/containers:classification_result",
@@ -34,6 +39,7 @@ cc_binary(
     name = "mediapipe_main",
     srcs = [
         "pose_landmarker_mp_main.cc",
+        "pose_landmarker_ccl_main.cc",
         "face_landmarker_mp_main.cc",
         "face_landmarker_ccl_main.cc"
     ],
@@ -52,7 +58,10 @@ cc_binary(
 # internal for bazel
 cc_library(
     name = "mediapipe_lib",
-    srcs = ["face_landmarker.cc"],
+    srcs = [
+        "face_landmarker.cc",
+        "pose_landmarker.cc"
+    ],
     hdrs = ["mediapipe.hh", "mediapipe_detail.hh"],
     deps = [
         "//mediapipe/tasks/cc/components/containers:category",
