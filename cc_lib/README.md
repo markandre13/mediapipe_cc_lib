@@ -26,27 +26,6 @@ therefore i had to come up with something on my own.
 data exchange format
 * details on the [face landmarker](https://developers.google.com/mediapipe/solutions/vision/face_landmarker): task file and detailed description are linked at the bottom of the page
 
-## build
-
-### opencv
-
-the [installation guide](https://developers.google.com/mediapipe/framework/getting_started/install) states
-
-> To interoperate with OpenCV, OpenCV 3.x to 4.1 are preferred.
-
-macOS brew is on 4.9 and the build fails with
-
-    ./mediapipe/framework/port/opencv_core_inc.h:18:10: fatal error: 'opencv2/core/version.hpp' file not found
-
-opencv3 works but has been disabled on 2024-01-31. it can be still installed with
-
-    HOMEBREW_NO_INSTALL_FROM_API=1 brew install opencv@3
-    brew edit opencv@3
-
-remove the line `disable! date: "2024-01-31", because: :unmaintained` then run again
-
-    HOMEBREW_NO_INSTALL_FROM_API=1 brew install opencv@3
-
 ### build
 
     cd cc_lib && make
