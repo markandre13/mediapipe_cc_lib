@@ -17,6 +17,12 @@ using mediapipe::cc_lib::vision::pose_landmarker::PoseLandmarkerOptions;
 
 using namespace std;
 
+constexpr double epsilion = 0.0001;
+
+constexpr bool almostEqual(double a, double b) {
+  return fabs(a - b) <= epsilion;
+}
+
 int main() {
   cout << "start pose_landmarker_it" << endl;
 
@@ -67,15 +73,15 @@ int main() {
     return 1;
   }
   auto &lm = result->pose_landmarks[0].landmarks[0];
-  if (fabs(lm.x - 0.358083) > 0.000001) {
+  if (!almostEqual(lm.x, 0.358083)) {
     cerr << "face landmarks: expected x = 0.358083, got " << lm.x << endl;
     return 1;
   }
-  if (fabs(lm.y - 0.249386) > 0.000001) {
+  if (!almostEqual(lm.y, 0.249386)) {
     cerr << "face landmarks: expected y = 0.249386, got " << lm.y << endl;
     return 1;
   }
-  if (fabs(lm.z - -0.305153) > 0.000001) {
+  if (!almostEqual(lm.z, -0.305153)) {
     cerr << "face landmarks: expected z = -0.305153, got " << lm.z << endl;
     return 1;
   }
@@ -91,15 +97,15 @@ int main() {
     return 1;
   }
   lm = result->pose_world_landmarks[0].landmarks[0];
-  if (fabs(lm.x - 0.134793) > 0.000001) {
+  if (!almostEqual(lm.x, 0.134793)) {
     cerr << "world face landmarks: expected x = 0.134793, got " << lm.x << endl;
     return 1;
   }
-  if (fabs(lm.y - -0.485992) > 0.000001) {
+  if (!almostEqual(lm.y, -0.485992)) {
     cerr << "world face landmarks: expected y = -0.485992, got " << lm.y << endl;
     return 1;
   }
-  if (fabs(lm.z - -0.3533) > 0.000001) {
+  if (!almostEqual(lm.z, -0.3533)) {
     cerr << "world face landmarks: expected z = -0.3533, got " << lm.z << endl;
     return 1;
   }
