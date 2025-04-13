@@ -4,7 +4,7 @@
 # * brew install llvm opencv python@3.12 numpy
 # * get bazel 6.5.0
 #   https://github.com/bazelbuild/bazel/releases/tag/6.5.0
-BAZEL_BIN=bazel-6.5.0
+BAZEL_BIN=bazel
 BAZEL_DEF=--define MEDIAPIPE_DISABLE_GPU=1
 
 all: face_landmarker.task pose_landmarker_lite.task pose_landmarker_full.task pose_landmarker_heavy.task
