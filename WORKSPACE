@@ -610,7 +610,7 @@ new_local_repository(
     # If you edit the path here, you will also need to update the corresponding
     # prefix in "opencv_macos.BUILD".
     # path = "/usr/local",  # e.g. /usr/local/Cellar for HomeBrew
-    path = "/usr/local/Cellar"
+    path = "/opt/homebrew/Cellar"
 )
 
 new_local_repository(
