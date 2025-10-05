@@ -2,8 +2,11 @@
 
 # on macOS
 # * brew install llvm opencv python@3.12 numpy
-# * get bazel 6.5.0
-#   https://github.com/bazelbuild/bazel/releases/tag/6.5.0
+# * how to get bazel 7.4.1
+#   * download bazel binary from https://github.com/bazelbuild/bazel/releases/tag/7.4.1
+#   * try to run bazel
+#   * open System Settings > Privacy & Security > Security
+#     and allow the execution of 'bazel'
 BAZEL_BIN=bazel
 BAZEL_DEF=--define MEDIAPIPE_DISABLE_GPU=1
 
