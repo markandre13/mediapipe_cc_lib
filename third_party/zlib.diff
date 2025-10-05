@@ -1,4 +1,5 @@
-diff -ruN a/contrib/minizip/ioapi.h b/contrib/minizip/ioapi.h
+diff --git a/contrib/minizip/ioapi.h b/contrib/minizip/ioapi.h
+index a2d2e6e..28a77e1 100644
 --- a/contrib/minizip/ioapi.h
 +++ b/contrib/minizip/ioapi.h
 @@ -21,7 +21,7 @@
@@ -10,7 +11,8 @@ diff -ruN a/contrib/minizip/ioapi.h b/contrib/minizip/ioapi.h
  
    // Linux needs this to support file operation on files larger then 4+GB
    // But might need better if/def to select just the platforms that needs them.
-diff -ruN a/contrib/minizip/miniunz.c b/contrib/minizip/miniunz.c
+diff --git a/contrib/minizip/miniunz.c b/contrib/minizip/miniunz.c
+index d627c42..a1e6d15 100644
 --- a/contrib/minizip/miniunz.c
 +++ b/contrib/minizip/miniunz.c
 @@ -12,7 +12,7 @@
@@ -26,12 +28,12 @@ diff -ruN a/contrib/minizip/miniunz.c b/contrib/minizip/miniunz.c
          #endif
  #endif
  
--#ifdef __APPLE__
-+#if defined(__APPLE__) || defined(IOAPI_NO_64)
+-#if defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
++#if defined(__APPLE__) || defined(IOAPI_NO_64) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
  // In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions
  #define FOPEN_FUNC(filename, mode) fopen(filename, mode)
  #define FTELLO_FUNC(stream) ftello(stream)
-@@ -50,6 +50,7 @@
+@@ -51,6 +51,7 @@
  # include <direct.h>
  # include <io.h>
  #else
@@ -39,7 +41,8 @@ diff -ruN a/contrib/minizip/miniunz.c b/contrib/minizip/miniunz.c
  # include <unistd.h>
  # include <utime.h>
  #endif
-diff -ruN a/contrib/minizip/minizip.c b/contrib/minizip/minizip.c
+diff --git a/contrib/minizip/minizip.c b/contrib/minizip/minizip.c
+index 26ee8d0..427049b 100644
 --- a/contrib/minizip/minizip.c
 +++ b/contrib/minizip/minizip.c
 @@ -13,7 +13,7 @@
@@ -51,12 +54,3 @@ diff -ruN a/contrib/minizip/minizip.c b/contrib/minizip/minizip.c
          #ifndef __USE_FILE_OFFSET64
                  #define __USE_FILE_OFFSET64
          #endif
-@@ -28,7 +28,7 @@
-         #endif
- #endif
- 
--#ifdef __APPLE__
-+#if defined(__APPLE__) || defined(IOAPI_NO_64)
- // In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions
- #define FOPEN_FUNC(filename, mode) fopen(filename, mode)
- #define FTELLO_FUNC(stream) ftello(stream)
